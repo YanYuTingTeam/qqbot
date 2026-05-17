@@ -74,6 +74,8 @@ async def ping_java(host: str, port: int, timeout=3):
         req = pack_varint(0)
         writer.write(pack_varint(len(req)) + req)
         await writer.drain()
+        await read_varint(reader)
+        await read_varint(reader)
         json_len = await read_varint(reader)
         body = b""
         while len(body) < json_len:
