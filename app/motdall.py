@@ -9,7 +9,7 @@ import tempfile
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from extension.picMaker import *
-from extension import motdtest
+from extension import motd1
 from extension import motd2
 from extension import motd3
 from extension import motd4
@@ -215,7 +215,7 @@ async def todo(way: int = 1):
                 elif way ==2:
                     task = asyncio.create_task(motd3.motd(server, port))
                 elif way ==3:
-                    task = asyncio.create_task(motdtest.motd(server, port))
+                    task = asyncio.create_task(motd1.motd(server, port))
                 else:
                     task = asyncio.create_task(motd2.motd(server, port))
             else:
@@ -224,7 +224,7 @@ async def todo(way: int = 1):
                 elif way ==2:
                     task = asyncio.create_task(motd3.motd(server))
                 elif way ==3:
-                    task = asyncio.create_task(motdtest.motd(server))
+                    task = asyncio.create_task(motd1.motd(server))
                 else:
                     task = asyncio.create_task(motd2.motd(server))
             tasks.append(task)
