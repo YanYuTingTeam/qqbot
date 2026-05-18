@@ -11,7 +11,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     " ( 括号 ) 内的参数可空\n" \
     "/yyt 《烟雨庭》相关总命令\n" \
     "/abw AerBedWars相关总命令\n" \
-    "/motd (main <1/2>) 使用方法<1/2>返回所有《花雨庭》还原服信息\n" \
+    "/motd (main <1..4>) 使用方法<1..4>返回所有《花雨庭》还原服信息\n" \
     "/v 《烟雨庭》志愿者总命令\n" \
     "/sd SweetDream相关总命令\n" \
     "/ncm 网易云相关总命令\n" \
