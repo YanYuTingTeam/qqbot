@@ -1,9 +1,12 @@
 import json
 import requests
+import asyncio
 import sys
 import importlib
+import time
 import os
 from urllib.parse import urljoin, urlencode
+from concurrent.futures import ThreadPoolExecutor
 requests.packages.urllib3.disable_warnings()
 
 # 每个功能再调用前都会先动态加载一遍config 目的其实是用来刷新whitelist 这里不体现 详见 commands/v/ 下的py
@@ -16,11 +19,33 @@ async def sendrequest(path, **args):
     if config_path in sys.modules:
         del sys.modules[config_path]
     config = importlib.import_module(config_path)
+
+    def check_url_latency(url):
+        url = url.rstrip('/')
+        try:
+            start_time = time.time()
+            response = requests.head(url, timeout=3, verify=False)
+            if response.status_code < 500:
+                latency = time.time() - start_time
+                return url, latency
+        except Exception:
+            pass
+        return url, float('inf')
+    urls = config.panel_url
+    best_url = None
+    loop = asyncio.get_event_loop()
+    with ThreadPoolExecutor(max_workers=len(urls)) as executor:
+        tasks = [loop.run_in_executor(executor, check_url_latency, u) for u in urls]
+        results = await asyncio.gather(*tasks)
+        valid_results = [res for res in results if res[1] != float('inf')]
+        if not valid_results:
+            raise(Exception('所有面板源均不可用'))
+        best_url, min_latency = min(valid_results, key=lambda x: x[1])
+    base_url = best_url.rstrip('/')
     method = args.get('method', 'GET').upper()
     custom_params = args.get('params', {})
     post_data = args.get('data', None)
     req_timeout = args.get('timeout', config.timeout)
-    base_url = config.panel_url.rstrip('/')
     full_url = urljoin(base_url, path.lstrip('/'))
     base_params = {'apikey': config.api_key}
     request_params = {**base_params, **custom_params}
@@ -61,6 +86,7 @@ async def sendrequest(path, **args):
         try:
             response_data = response.json()
         except json.JSONDecodeError as e:
+            raise(Exception(f'JSON解析失败 {str(response.text)}'))
             return {
                 'success': False,
                 'error': f'JSON解析失败 {str(e)}',
@@ -74,17 +100,20 @@ async def sendrequest(path, **args):
             'status_code': response.status_code
         }
     except requests.exceptions.Timeout:
+        raise(Exception(f'请求超时'))
         return {
             'success': False,
             'error': '请求超时',
             'timeout': req_timeout
         }
     except requests.exceptions.ConnectionError:
+        raise(Exception(f'连接失败'))
         return {
             'success': False,
             'error': f'连接失败 {base_url}'
         }
     except requests.exceptions.HTTPError as e:
+        raise(Exception(f'HTTP错误'))
         return {
             'success': False,
             'error': f'HTTP错误 {str(e)}',
@@ -92,6 +121,7 @@ async def sendrequest(path, **args):
             'raw_response': response.text
         }
     except Exception as e:
+        raise(Exception(str(e)))
         return {
             'success': False,
             'error': f'未知错误 {str(e)}',
