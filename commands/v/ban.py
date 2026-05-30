@@ -26,6 +26,9 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     if len(args)<1:
         await sendMessage.text("请提供要封禁的玩家名",message)
         return
+    if args[0].lower() == "aermini":
+        await sendMessage.text("你没有权限封禁这个玩家!",message)
+        return
     extra_params = {}
     _parts = []
     i = 0
@@ -47,9 +50,9 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     did = extra_params.get("did", config.daemon_id)
     btime = extra_params.get("t", "")
     breason = extra_params.get("r", "由于不正当的游戏行为被踢出游戏！")
-    if btime=="":
-        await sendMessage.text("请提供封禁时间!",message)
-        return
+    #if btime=="":
+    #    await sendMessage.text("请提供封禁时间!",message)
+    #    return
 
     if btime=="-1": btime = ""
     itid = extra_params.get("itid", "**HIDDEN**")
