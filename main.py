@@ -1,13 +1,19 @@
 import asyncio
 import re
 import os
-import botpy
-import importlib
-from botpy.message import GroupMessage
 import sys
+import importlib
+import inspect
+import botpy
+from botpy.message import GroupMessage
 from urllib.parse import quote
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
 from app.sendMessage import sendMessage
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+os.chdir(CURRENT_DIR)
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
+
 
 class MyBot(botpy.Client):
     async def on_ready(self):
@@ -15,12 +21,7 @@ class MyBot(botpy.Client):
 
     def parse_command(self, raw_content: str) -> dict:
         """
-        解析用户命令.\n
-        例如: \n
-        /abw bw => command: abw, args:["bw"]\n
-        yyt top bw 2 => command: yyt, args:["top","bw","2"]\n
-        返回格式: \n
-        {"command":command,"args":[args]}
+        解析用户命令.
         """
         content = re.sub(r"^@.*?\s", "", raw_content).strip()
         
@@ -40,9 +41,6 @@ class MyBot(botpy.Client):
         }
 
     async def on_group_at_message_create(self, message: GroupMessage):
-        """
-        
-        """   
         parse_result = self.parse_command(message.content)
         command = parse_result["command"]
         args = parse_result["args"]
@@ -58,41 +56,41 @@ class MyBot(botpy.Client):
         else:
             sub_command = args[0]
             sub_args = args[1:]
+            
+        api_module_path = f"commands.{command}.{sub_command}"
+        loop = asyncio.get_running_loop()
         try:
-            run_path = os.getcwd()
-            #module_path = f"commands.{command}.{sub_command}"
-            #module = importlib.import_module(module_path)
-            sys.path.insert(0, run_path)
-            api_module_path = f"commands.{command}.{sub_command}"
-            if api_module_path in sys.modules:
-                del sys.modules[api_module_path]
-            api_module = importlib.import_module(api_module_path)
-            await api_module.handle_command(sub_args, message)
+            def load_module():
+                if api_module_path in sys.modules:
+                    del sys.modules[api_module_path]
+                return importlib.import_module(api_module_path)
+            api_module = await loop.run_in_executor(None, load_module)
+            if inspect.iscoroutinefunction(api_module.handle_command):
+                await api_module.handle_command(sub_args, message)
+            else:
+                await loop.run_in_executor(None, api_module.handle_command, sub_args, message)
 
         except ImportError as e:
             if sub_command == "main":
-                await sendMessage.text(f"未知命令 /{command}",message)
+                await sendMessage.text(f"未知命令 /{command}", message)
             else:
                 if "No module named" in str(e):
-                    await sendMessage.text(f"功能不存在 {sub_command}@{command}",message)
+                    await sendMessage.text(f"功能不存在 {sub_command}@{command}", message)
                 else:
-                    await sendMessage.text(f"引用 {sub_command}@{command} 时，因其内部错误而未能成功\ndetail: {str(e)}",message)
+                    await sendMessage.text(f"引用 {sub_command}@{command} 时，因其内部错误而未能成功\ndetail: {str(e)}", message)
         except AttributeError:
-            await sendMessage.text(f"{'main' if sub_command == 'main' else f'{sub_command}'}@{command} 未能处理 handle_command",message)
+            await sendMessage.text(f"{'main' if sub_command == 'main' else f'{sub_command}'}@{command} 未能处理 handle_command", message)
         except Exception as e:
-            await sendMessage.text(f"执行{f' {sub_command}' if sub_command != 'main' else ''}@{command} 出错：{str(e)}",message)
+            await sendMessage.text(f"执行{f' {sub_command}' if sub_command != 'main' else ''}@{command} 出错：{str(e)}", message)
+
 
 async def main():
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    loop = asyncio.get_event_loop()
-    asyncio.set_event_loop(loop)
     intents = botpy.Intents(public_messages=True)
     bot = MyBot(intents=intents)
     await bot.start(appid="**HIDDEN**", secret="**HIDDEN**")
 
 if __name__ == "__main__":
-    import asyncio
-    print(sys.version)
+    print(f"Python 版本: {sys.version}")
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
