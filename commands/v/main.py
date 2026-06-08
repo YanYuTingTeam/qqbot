@@ -27,4 +27,6 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     "/v cmd <port> <command> 使子服批量执行命令\n" \
     "格式 port1~port2: (port1):(port2) 或 all 或 <表达式1>|<表达式2>\n" \
     "    比如 25565|25566|25569:29999\n" \
-    "/v bans (--t <条数>) (--p <页码>) 查看封禁列表",message)
+    "/v bans (--t <条数>) (--p <页码>) 查看封禁列表\n" \
+    "\n" \
+    "初次使用请先/v get然后等待加白!",message)
