@@ -1,0 +1,13 @@
+*.log
+*.err
+*.class
+*.zip
+target/
+build/
+*.iml
+.idea/
+.vscode/
+*.log.*
+desktop.ini
+__pycache__/
+*.pyc
