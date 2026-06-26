@@ -28,7 +28,7 @@ async def yytbw(json):
     if json["data"]["bowuse"] == 0:
         bs = "0%"
     else:
-        bs = str(round(json["data"]["bowHit"]/json["data"]["bowuse"]*100, 2))+"%"
+        bs = str(round(json["data"]["bowhit"]/json["data"]["bowuse"]*100, 2))+"%"
 
     bowMiss = int(json["data"]["bowuse"])-int(json["data"]["bowhit"])
 

@@ -27,7 +27,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
         await sendMessage.text("请提供要封禁的玩家名",message)
         return
     if args[0].lower() == "aermini":
-        await sendMessage.text("你没有权限封禁这个玩家!",message)
+        await sendMessage.text("该玩家无法被任何人封禁!",message)
         return
     extra_params = {}
     _parts = []
