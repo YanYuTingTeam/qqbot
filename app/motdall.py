@@ -35,25 +35,22 @@ async def motdall(json_list):
     maker = ImageMaker(str(bg_path))
 
     xyall = [
-        [1640, 400, 72],
-        [1640, 610, 72],
-        [1640, 820, 72],
-        [1640, 1030, 72],
-        [1640, 1940, 72],
-        [1640, 2150, 72],
-        #[3400, 400, 72],
-        [3400, 610, 72],
-        [3400, 1480, 72],
-        [3400, 2530, 72],
-        [3400, 2840, 72],
+        [1640, 397, 72], # yyt
+        [1640, 1319, 72], # lht 1
+        [1640, 1529, 72], # lht 2
+        [3400, 503, 72], # nmc
+        [3400, 1390, 72], # huh 1
+        [3400, 1585, 72], # huh 2
+        [3400, 2496, 72], # hzw 1
+        [3400, 2698, 72], # hzw 2
     ]
 
     group = [
-        {'x':440,'y':1395,'ar':[1,2,3,4]},
-        {'x':440,'y':2520,'ar':[5,6]},
-        {'x':2184,'y':965,'ar':[7]},
-        {'x':2184,'y':1980,'ar':[8]},
-        {'x':2184,'y':3204,'ar':[9,10]}
+        {'x':440,'y':764,'ar':[1]}, # yyt
+        {'x':440,'y':1910,'ar':[2,3]}, # lht
+        {'x':2184,'y':872,'ar':[4]}, # nmc
+        {'x':2184,'y':1950,'ar':[5,6]}, # huh
+        {'x':2184,'y':3068,'ar':[7,8]} # hzw
     ]
 
     for i, server_data in enumerate(json_list):
@@ -179,30 +176,27 @@ async def motdall(json_list):
         except: pass
 
     maker.text(
-        x=f"200px",
-        y=f"3350px",
+        x=f"110px",
+        y=f"3330px",
         size="60px",
         font_path=str(font_path),
         color="#ffffff",
         opacity=1.0,
         align="left",
-        content=get_current_time()
+        content="查询时间: "+get_current_time()
     )
 
     return maker.save(f"motd_all_{int(time.time()*1000)}.png")
 
 async def todo(way: int = 1):
     servers = [
-        ('mcyyt.top', 25565),
-        ('mc.mcyyt.top', 25565),
-        ('mc2.mcyyt.top', 25565),
-        ('mc3.mcyyt.top', 25565),
+        ('mcyyt.cn', 25565),
         ('hyt.nccc.top', 25565),
         ('hyt.galastar.icu', 25565),
-        #('sq1.hyt.xuebai.xyz', 25565),
         ('frp-ski.com', 44899),
+        ('pc.mchyt.net', 25565),
         ('hyt.backup.wanweitool.cn', 25565),
-        ('mc.huazhiwu.top', 25590),
+        ('mc.huazhiwu.top', 25565),
         ('mc163.gxeea.xyz', 25565)
     ]
     
@@ -246,3 +240,5 @@ async def todo(way: int = 1):
             
     except Exception as e:
         print(f"程序执行出错: {str(e)}")
+
+asyncio.run(todo(1))
