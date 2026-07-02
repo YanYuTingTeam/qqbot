@@ -12,6 +12,15 @@ class sendMessage:
         await message._api.post_group_message(
             group_openid=message.group_openid,
             msg_id=message.id,
+            msg_type=2,
+            markdown={"content": content.replace('\n','\u200b\n')},
+            msg_seq=seq
+        )
+
+    async def texttrue(content: str, message: GroupMessage, seq: int = 1):
+        await message._api.post_group_message(
+            group_openid=message.group_openid,
+            msg_id=message.id,
             #content=content.replace('.','/'),
             content=content,
             msg_seq=seq

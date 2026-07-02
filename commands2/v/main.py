@@ -9,7 +9,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     import importlib
     run_path = os.getcwd()
     sys.path.insert(0, run_path)
-    config_path = f"commands.v.config"
+    config_path = f"commands2.v.config"
     if config_path in sys.modules:
         del sys.modules[config_path]
     config = importlib.import_module(config_path)

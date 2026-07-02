@@ -15,7 +15,7 @@ async def sendrequest(path, **args):
     import importlib
     run_path = os.getcwd()
     sys.path.insert(0, run_path)
-    config_path = f"commands.v.config"
+    config_path = f"commands2.v.config"
     if config_path in sys.modules:
         del sys.modules[config_path]
     config = importlib.import_module(config_path)
@@ -132,7 +132,7 @@ async def get_all_instances(page: int = 1, size: int = 200):
     import importlib
     run_path = os.getcwd()
     sys.path.insert(0, run_path)
-    config_path = f"commands.v.config"
+    config_path = f"commands2.v.config"
     if config_path in sys.modules:
         del sys.modules[config_path]
     config = importlib.import_module(config_path)
@@ -178,7 +178,7 @@ async def get_single_instance(instance_uuid):
     import importlib
     run_path = os.getcwd()
     sys.path.insert(0, run_path)
-    config_path = f"commands.v.config"
+    config_path = f"commands2.v.config"
     if config_path in sys.modules:
         del sys.modules[config_path]
     config = importlib.import_module(config_path)
@@ -195,7 +195,7 @@ async def start_instance(instance_uuid):
     import importlib
     run_path = os.getcwd()
     sys.path.insert(0, run_path)
-    config_path = f"commands.v.config"
+    config_path = f"commands2.v.config"
     if config_path in sys.modules:
         del sys.modules[config_path]
     config = importlib.import_module(config_path)
