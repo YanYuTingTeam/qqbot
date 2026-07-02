@@ -17,12 +17,18 @@ class sendMessage:
             msg_seq=seq
         )
 
-    async def markdown(content, message: GroupMessage, seq: int = 1):
+    def at(atid: str = None):
+        if atid:
+            return f'<qqbot-at-user id="{atid}" />'
+        else:
+            return ""
+
+    async def markdown(content: str, message: GroupMessage, seq: int = 1):
         await message._api.post_group_message(
             group_openid=message.group_openid,
             msg_id=message.id,
             msg_type=2,
-            content=content,
+            markdown={"content": content},
             msg_seq=seq
         )
 
