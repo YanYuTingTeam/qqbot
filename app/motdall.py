@@ -40,7 +40,7 @@ async def motdall(json_list):
         [1640, 1529, 72], # lht 2
         [3400, 503, 72], # nmc
         [3400, 1390, 72], # huh 1
-        [3400, 1585, 72], # huh 2
+        #[3400, 1585, 72], # huh 2
         [3400, 2496, 72], # hzw 1
         [3400, 2698, 72], # hzw 2
     ]
@@ -195,7 +195,6 @@ async def todo(way: int = 1):
         ('hyt.galastar.icu', 25565),
         ('frp-ski.com', 44899),
         ('pc.mchyt.net', 25565),
-        ('hyt.backup.wanweitool.cn', 25565),
         ('mc.huazhiwu.club', 25565),
         ('mc.huazhiwu.top', 25565)
     ]
@@ -240,5 +239,3 @@ async def todo(way: int = 1):
             
     except Exception as e:
         print(f"程序执行出错: {str(e)}")
-
-asyncio.run(todo(1))
