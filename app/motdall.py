@@ -49,8 +49,8 @@ async def motdall(json_list):
         {'x':440,'y':764,'ar':[1]}, # yyt
         {'x':440,'y':1910,'ar':[2,3]}, # lht
         {'x':2184,'y':872,'ar':[4]}, # nmc
-        {'x':2184,'y':1950,'ar':[5,6]}, # huh
-        {'x':2184,'y':3068,'ar':[7,8]} # hzw
+        {'x':2184,'y':1950,'ar':[5]}, # huh
+        {'x':2184,'y':3068,'ar':[6,7]} # hzw
     ]
 
     for i, server_data in enumerate(json_list):
