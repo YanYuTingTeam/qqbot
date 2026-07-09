@@ -203,23 +203,9 @@ async def todo(way: int = 1):
         tasks = []
         for server, port in servers:
             if port:
-                if way ==1:
-                    task = asyncio.create_task(motd4.motd(server, port))
-                elif way ==2:
-                    task = asyncio.create_task(motd3.motd(server, port))
-                elif way ==3:
-                    task = asyncio.create_task(motd1.motd(server, port))
-                else:
-                    task = asyncio.create_task(motd2.motd(server, port))
+                task = asyncio.create_task(motd4.motd(server, port))
             else:
-                if way ==1:
-                    task = asyncio.create_task(motd4.motd(server))
-                elif way ==2:
-                    task = asyncio.create_task(motd3.motd(server))
-                elif way ==3:
-                    task = asyncio.create_task(motd1.motd(server))
-                else:
-                    task = asyncio.create_task(motd2.motd(server))
+                task = asyncio.create_task(motd4.motd(server))
             tasks.append(task)
 
         info_list = await asyncio.gather(*tasks, return_exceptions=True)
