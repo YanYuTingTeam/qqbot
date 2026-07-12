@@ -2,6 +2,7 @@
 import time
 import sys
 import os
+import asyncio
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from extension.picMaker import *
 
@@ -28,7 +29,7 @@ async def yytbwxp(json):
     if json["data"]["bowuse"] == 0:
         bs = "0%"
     else:
-        bs = str(round(json["data"]["bowHit"]/json["data"]["bowuse"]*100, 2))+"%"
+        bs = str(round(json["data"]["bowhit"]/json["data"]["bowuse"]*100, 2))+"%"
 
     bowMiss = int(json["data"]["bowuse"])-int(json["data"]["bowhit"])
 
@@ -118,27 +119,6 @@ async def yytbwxp(json):
 
     maker.text(
         x="48%",
-        y="23.3%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=json["data"]["rank"]
-    )
-
-    maker.text(
-        x="48%",
-        y="31.6%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=json["data"]["score"]
-    )
-    maker.text(
-        x="48%",
         y="47.8%",
         size="96px",
         font_path=usefont,
@@ -187,27 +167,7 @@ async def yytbwxp(json):
         align="left",
         content=json["data"]["mvps"]
     )
-    maker.text(
-        x="79%",
-        y="23.5%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=json["data"]["level"]
-    )
 
-    maker.text(
-        x="81.1%",
-        y="31.5%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=json["data"]["levelScore"]
-    )
     maker.text(
         x="79%",
         y="47.8%",
@@ -259,10 +219,32 @@ async def yytbwxp(json):
         content=json["data"]["QMan"]
     )
 
+    maker.text(
+        x="48%",
+        y="23.3%",
+        size="96px",
+        font_path=usefont,
+        color="#FFFFFF",
+        opacity=1.0,
+        align="left",
+        content=json["data"]["rank"]
+    )
+
+    maker.text(
+        x="48%",
+        y="31.6%",
+        size="96px",
+        font_path=usefont,
+        color="#FFFFFF",
+        opacity=1.0,
+        align="left",
+        content=json["data"]["score"]
+    )
+
     # return maker.save(f"custom_result.jpg")
     return maker.save(f"yyt_bw_{int(round(time.time() * 1000))}.png")
 
-#yytbw({
+#asyncio.run(yytbwxp({
 #        "success": true,
 #        "uuid": "5601946c-0156-37ab-91e5-b75f5c78c730",
 #        "playername": "AerMini",
@@ -279,10 +261,8 @@ async def yytbwxp(json):
 #            "rank": 3,
 #            "QMan": 0,
 #            "bowuse": 0,
-#            "bowHit": 0,
+#            "bowhit": 0,
 #            "bowMiss": 0,
 #            "mvps": 0,
-#            "level": "青铜",
-#            "levelScore": 1000
 #        }
-#    })
+#    }))

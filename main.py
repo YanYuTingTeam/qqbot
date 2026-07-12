@@ -9,7 +9,9 @@ from botpy.message import GroupMessage
 from botpy.connection import ConnectionState
 from urllib.parse import quote
 import json
-from datetime import datetime
+from datetime import datetime, date
+import sqlite3
+import traceback
 from app.sendMessage import sendMessage
 from app.api_server import start_api_server, record_botpy_message
 from web_viewer import start_web_viewer
@@ -19,8 +21,72 @@ os.chdir(CURRENT_DIR)
 if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
-# 暂存原始 payload（GroupMessage 用了 __slots__ 不能动态加属性）
+LIMIT_CHECK_SECONDS = 1
+LIMIT_MAX_MSG = 1
+LIMIT_BAN_SECONDS = 10
+DB_PATH = os.path.join(CURRENT_DIR, "db.sqlite")
+TABLE_RATE_LIMIT = "cmd_rate_limit"
+
 _raw_payloads = {}
+
+def init_rate_limit_db():
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    cursor = conn.cursor()
+    create_sql = f"""
+    CREATE TABLE IF NOT EXISTS {TABLE_RATE_LIMIT} (
+        member_openid TEXT PRIMARY KEY,
+        cmd_timestamps TEXT NOT NULL,
+        ban_until INTEGER NOT NULL DEFAULT 0
+    )
+    """
+    cursor.execute(create_sql)
+    conn.commit()
+    conn.close()
+
+def get_ts() -> int:
+    return int(datetime.now().timestamp())
+
+def check_user_limit(openid: str) -> tuple[bool, int]:
+    init_rate_limit_db()
+    now_ts = get_ts()
+    window_start_ts = now_ts - LIMIT_CHECK_SECONDS
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT cmd_timestamps, ban_until FROM {TABLE_RATE_LIMIT} WHERE member_openid = ?", (openid,))
+    row = cursor.fetchone()
+    ban_remain = 0
+    ts_list = []
+    if row:
+        ts_str, ban_until = row
+        if ban_until > now_ts:
+            ban_remain = ban_until - now_ts
+            conn.close()
+            return False, ban_remain
+        if ts_str.strip():
+            ts_list = list(map(int, ts_str.split(",")))
+    valid_ts = [t for t in ts_list if t >= window_start_ts]
+    if len(valid_ts) < LIMIT_MAX_MSG:
+        valid_ts.append(now_ts)
+        new_ts_str = ",".join(map(str, valid_ts))
+        cursor.execute(
+            f"""INSERT OR REPLACE INTO {TABLE_RATE_LIMIT}
+                (member_openid, cmd_timestamps, ban_until)
+                VALUES (?, ?, ?)""",
+            (openid, new_ts_str, 0)
+        )
+        conn.commit()
+        conn.close()
+        return True, 0
+    ban_end_ts = now_ts + LIMIT_BAN_SECONDS
+    cursor.execute(
+        f"""INSERT OR REPLACE INTO {TABLE_RATE_LIMIT}
+            (member_openid, cmd_timestamps, ban_until)
+            VALUES (?, ?, ?)""",
+        (openid, ",".join(map(str, valid_ts)), ban_end_ts)
+    )
+    conn.commit()
+    conn.close()
+    return False, LIMIT_BAN_SECONDS
 
 def parse_group_message_create(self, payload):
     _message = GroupMessage(self.api, payload.get("id", None), payload.get("d", {}))
@@ -33,6 +99,7 @@ ConnectionState.parse_group_message_create = parse_group_message_create
 class MyBot(botpy.Client):
     async def on_ready(self):
         print(f"机器人「{self.robot.name}」已上线，开始监听事件...")
+        init_rate_limit_db()
 
     def parse_group_command(self, raw_content: str) -> dict:
         stripped = (raw_content or "").strip()
@@ -57,7 +124,6 @@ class MyBot(botpy.Client):
         }
     
     async def on_group_message_create(self, message: GroupMessage):
-        # ---- 记录每条群消息到 message_log（带 member_openid）----
         try:
             raw = _raw_payloads.pop(message.id, {})
             ts = getattr(message, 'timestamp', None) or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -70,9 +136,8 @@ class MyBot(botpy.Client):
                 raw_data=json.dumps(raw, ensure_ascii=False) if raw else ""
             )
         except Exception:
-            pass  # 记录失败不影响正常消息处理
+            pass
 
-        # ---- 原有命令处理逻辑 ----
         result = self.parse_group_command(message.content)
         command = result["command"]
         args = result["args"]
@@ -86,6 +151,11 @@ class MyBot(botpy.Client):
             await self.MessageHandleAll(command, args, message)
 
     async def MessageHandle(self, command, args, message: GroupMessage) -> str:
+        openid = message.author.member_openid
+        allow_run, ban_sec = check_user_limit(openid)
+        if not allow_run:
+            await sendMessage.text(f"你调用的太快了! 还需要等待 {ban_sec} 秒才能再次使用命令", message)
+            return
         if not args:
             sub_command = "main"
             sub_args = []
@@ -138,6 +208,11 @@ class MyBot(botpy.Client):
                 return importlib.import_module(api_module_path)
             api_module = await loop.run_in_executor(None, load_module)
             handler = getattr(api_module, 'handle_command', None)
+            openid = message.author.member_openid
+            allow_run, ban_sec = check_user_limit(openid)
+            if not allow_run:
+                await sendMessage.text(f"你调用的太快了! 还需要等待 {ban_sec} 秒才能再次使用命令", message)
+                return
             if handler is None:
                 await sendMessage.text(f"{'main' if sub_command == 'main' else sub_command}@{command} 未能处理 handle_command", message)
                 return
@@ -157,7 +232,6 @@ class MyBot(botpy.Client):
         except Exception as e:
             await sendMessage.text(f"执行{f' {sub_command}' if sub_command != 'main' else ''}@{command} 出错：{str(e)}", message)
 
-
 async def main():
     intents = botpy.Intents(public_messages=True)
     bot = MyBot(intents=intents)
@@ -172,4 +246,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n机器人已手动终止，停止监听")
     except Exception as e:
+        traceback.print_exc()
         print(f"运行出错：{e}")

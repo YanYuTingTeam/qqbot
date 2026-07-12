@@ -58,7 +58,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     # ========== 1. 动态加载配置（复用鉴权基础） ==========
     run_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # 项目根目录
     sys.path.insert(0, run_path)
-    config_path = "commands.v.config"  # 对应commands/v/config.py模块
+    config_path = "commands2.v.config"  # 对应commands/v/config.py模块
     if config_path in sys.modules:
         del sys.modules[config_path]
     config = importlib.import_module(config_path)

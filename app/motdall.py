@@ -194,7 +194,7 @@ async def todo(way: int = 1):
         ('hyt.nccc.top', 25565),
         ('hyt.galastar.icu', 25565),
         ('frp-ski.com', 44899),
-        ('pc.mchyt.net', 25565),
+        ('km.pc.mchyt.net', 25565),
         ('mc.huazhiwu.club', 25565),
         ('mc.huazhiwu.top', 25565)
     ]
