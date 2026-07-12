@@ -26,13 +26,6 @@ async def yytbwxp(json):
         wl = str(round(json["data"]["wins"]/json["data"]["gamesPlayed"]*100, 2))+"%"
         bp = round(json["data"]["destroyedBeds"]/json["data"]["gamesPlayed"], 2)
 
-    if json["data"]["bowuse"] == 0:
-        bs = "0%"
-    else:
-        bs = str(round(json["data"]["bowhit"]/json["data"]["bowuse"]*100, 2))+"%"
-
-    bowMiss = int(json["data"]["bowuse"])-int(json["data"]["bowhit"])
-
     maker.text(
         x="16.5%",
         y="23.5%",
@@ -118,8 +111,8 @@ async def yytbwxp(json):
     )
 
     maker.text(
-        x="48%",
-        y="47.8%",
+        x="60.5%",
+        y="51.9%", # +4.1
         size="96px",
         font_path=usefont,
         color="#FFFFFF",
@@ -128,8 +121,8 @@ async def yytbwxp(json):
         content=json["data"]["gamesPlayed"]
     )
     maker.text(
-        x="48%",
-        y="56.05%",
+        x="60.5%",
+        y="60.15%",
         size="96px",
         font_path=usefont,
         color="#FFFFFF",
@@ -138,8 +131,8 @@ async def yytbwxp(json):
         content=json["data"]["wins"]
     )
     maker.text(
-        x="48%",
-        y="64.3%",
+        x="60.5%",
+        y="68.4%",
         size="96px",
         font_path=usefont,
         color="#FFFFFF",
@@ -148,8 +141,8 @@ async def yytbwxp(json):
         content=json["data"]["loses"]
     )
     maker.text(
-        x="48%",
-        y="72.5%",
+        x="60.5%",
+        y="76.6%",
         size="96px",
         font_path=usefont,
         color="#FFFFFF",
@@ -157,70 +150,9 @@ async def yytbwxp(json):
         align="left",
         content=wl
     )
-    maker.text(
-        x="52.4%",
-        y="80.5%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=json["data"]["mvps"]
-    )
 
     maker.text(
-        x="79%",
-        y="47.8%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=json["data"]["bowuse"]
-    )
-    maker.text(
-        x="79%",
-        y="56.05%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=json["data"]["bowhit"]
-    )
-    maker.text(
-        x="79%",
-        y="64.3%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=bowMiss
-    )
-    maker.text(
-        x="81.3%",
-        y="72.5%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=bs
-    )
-    maker.text(
-        x="79%",
-        y="80.75%",
-        size="96px",
-        font_path=usefont,
-        color="#FFFFFF",
-        opacity=1.0,
-        align="left",
-        content=json["data"]["QMan"]
-    )
-
-    maker.text(
-        x="48%",
+        x="60.5%",
         y="23.3%",
         size="96px",
         font_path=usefont,
@@ -231,7 +163,7 @@ async def yytbwxp(json):
     )
 
     maker.text(
-        x="48%",
+        x="60.5%",
         y="31.6%",
         size="96px",
         font_path=usefont,
@@ -242,7 +174,7 @@ async def yytbwxp(json):
     )
 
     # return maker.save(f"custom_result.jpg")
-    return maker.save(f"yyt_bw_{int(round(time.time() * 1000))}.png")
+    return maker.save(f"yyt_bwxp_{int(round(time.time() * 1000))}.png")
 
 #asyncio.run(yytbwxp({
 #        "success": true,
@@ -259,10 +191,5 @@ async def yytbwxp(json):
 #            "gamesPlayed": 13,
 #            "winRate": 76.92,
 #            "rank": 3,
-#            "QMan": 0,
-#            "bowuse": 0,
-#            "bowhit": 0,
-#            "bowMiss": 0,
-#            "mvps": 0,
 #        }
 #    }))

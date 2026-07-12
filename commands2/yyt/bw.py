@@ -18,7 +18,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     if len(player_name) > 16 or len(player_name) < 2 or not check_allowed_chars(player_name):
         await sendMessage.text("请提供正确的玩家名.", message)
     api_url = f"https://www.mcyyt.top/api/bedwars/classic/?name={player_name}"
-
+    await sendMessage.text(f"{sendMessage.at(message.author.member_openid)} 正在请求数据, 请稍等", message, 2)
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(api_url, timeout=aiohttp.ClientTimeout(10)) as response:
