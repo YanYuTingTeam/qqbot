@@ -16,6 +16,15 @@ from app.sendMessage import sendMessage
 from app.api_server import start_api_server, record_botpy_message
 from web_viewer import start_web_viewer
 
+from extension.request import configure
+
+configure(
+    base_url="",
+    salt="**HIDDEN**",
+    origin="**HIDDEN**",
+    algorithm="HmacSHA256",
+)
+
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 os.chdir(CURRENT_DIR)
 if CURRENT_DIR not in sys.path:

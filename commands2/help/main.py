@@ -7,7 +7,6 @@ from app.sendMessage import sendMessage
 
 async def handle_command(args: List[str], message: GroupMessage) -> str:
     await sendMessage.text("小烟雨 BOT - 菜单\n" \
-    "使用命令请先艾特 @小烟雨\n" \
     " ( 括号 ) 内的参数可空\n" \
     "/yyt 《烟雨庭》相关总命令\n" \
     "/abw AerBedWars相关总命令\n" \
