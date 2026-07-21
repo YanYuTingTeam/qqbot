@@ -52,7 +52,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
         await sendMessage.text(f"单页最大10条结果!", message)
         return
     
-    api_url = f"https://www.mcyyt.top/api/bans/list.php?p={p}&t={t}"
+    api_url = f"https://www.mcyyt.cn/api/bans/list.php?p={p}&t={t}"
     
     try:
         async with aiohttp.ClientSession() as session:
