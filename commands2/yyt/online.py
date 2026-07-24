@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.sendMessage import sendMessage
 
 async def handle_command(args: List[str], message: GroupMessage) -> str:
-    api_url = f"https://www.mcyyt.top/api/getServer/?id=**HIDDEN**"
+    api_url = f"https://www.mcyyt.cn/api/getServer/?id=**HIDDEN**"
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(api_url, timeout=aiohttp.ClientTimeout(10)) as response:

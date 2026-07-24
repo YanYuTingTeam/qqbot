@@ -21,7 +21,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
         except:
             await sendMessage.text("请输入正确的排名(111&2).",message)
         top = args[1]
-        api_url = f"https://www.mcyyt.top/api/bedwars/classic/top/?rank={top}"
+        api_url = f"https://www.mcyyt.cn/api/bedwars/classic/top/?rank={top}"
  
         try:
             async with aiohttp.ClientSession() as session:
