@@ -34,13 +34,14 @@ async def sendrequest(path, **args):
     a = str(int(time.time() * 1000))
     b = hmac.new(salt.encode('utf-8'), (apikey + a + sign_path).encode('utf-8'), hashlib.md5).hexdigest()
     headers = {
-        'Content-Type': 'application/json; charset=utf-8',
         'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json; charset=utf-8',
         'X-API-Key': apikey,
         'a': a,
         'b': b
     }
-    request_params = {**custom_params}
+    request_params = {**custom_params, 'apikey': config.api_key}
 
     try:
         if method == 'GET':
@@ -101,7 +102,7 @@ async def sendrequest(path, **args):
             'error': f'连接失败 {base_url}'
         }
     except requests.exceptions.HTTPError as e:
-        raise(Exception(f'HTTP错误'))
+        raise(Exception(f'HTTP错误 {str(e)}'))
         return {
             'success': False,
             'error': f'HTTP错误 {str(e)}',
@@ -109,7 +110,7 @@ async def sendrequest(path, **args):
             'raw_response': response.text
         }
     except Exception as e:
-        raise(Exception(str(e)))
+        raise(Exception(f'未知错误 {str(e)}'))
         return {
             'success': False,
             'error': f'未知错误 {str(e)}',
