@@ -4,12 +4,12 @@ import asyncio
 import sys
 import importlib
 import time
+import hmac
+import hashlib
 import os
-from urllib.parse import urljoin, urlencode
+from urllib.parse import urlencode
 from concurrent.futures import ThreadPoolExecutor
 requests.packages.urllib3.disable_warnings()
-
-# 每个功能再调用前都会先动态加载一遍config 目的其实是用来刷新whitelist 这里不体现 详见 commands/v/ 下的py
 
 async def sendrequest(path, **args):
     import importlib
@@ -20,40 +20,28 @@ async def sendrequest(path, **args):
         del sys.modules[config_path]
     config = importlib.import_module(config_path)
 
-    def check_url_latency(url):
-        url = url.rstrip('/')
-        try:
-            start_time = time.time()
-            response = requests.head(url, timeout=3, verify=False)
-            if response.status_code < 500:
-                latency = time.time() - start_time
-                return url, latency
-        except Exception:
-            pass
-        return url, float('inf')
-    urls = config.panel_url
-    best_url = None
-    loop = asyncio.get_event_loop()
-    with ThreadPoolExecutor(max_workers=len(urls)) as executor:
-        tasks = [loop.run_in_executor(executor, check_url_latency, u) for u in urls]
-        results = await asyncio.gather(*tasks)
-        valid_results = [res for res in results if res[1] != float('inf')]
-        if not valid_results:
-            raise(Exception('所有面板源均不可用'))
-        best_url, min_latency = min(valid_results, key=lambda x: x[1])
-    base_url = best_url.rstrip('/')
+    base_url = config.proxy_url.rstrip('/')
+    salt = getattr(config, 'salt', '**HIDDEN**')
+    apikey = config.apikey
     method = args.get('method', 'GET').upper()
     custom_params = args.get('params', {})
     post_data = args.get('data', None)
-    req_timeout = args.get('timeout', config.timeout)
-    full_url = urljoin(base_url, path.lstrip('/'))
-    base_params = {'apikey': config.api_key}
-    request_params = {**base_params, **custom_params}
+    req_timeout = args.get('timeout', getattr(config, 'timeout', 10))
+
+    sign_path = '/' + path.lstrip('/')
+    full_url = base_url + sign_path
+
+    a = str(int(time.time() * 1000))
+    b = hmac.new(salt.encode('utf-8'), (apikey + a + sign_path).encode('utf-8'), hashlib.md5).hexdigest()
     headers = {
         'Content-Type': 'application/json; charset=utf-8',
-        'X-Requested-With': 'XMLHttpRequest'
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-API-Key': apikey,
+        'a': a,
+        'b': b
     }
-    
+    request_params = {**custom_params}
+
     try:
         if method == 'GET':
             if request_params:
@@ -64,7 +52,7 @@ async def sendrequest(path, **args):
                 timeout=req_timeout,
                 verify=False
             )
-        
+
         elif method == 'POST':
             if request_params:
                 full_url += '?' + urlencode(request_params)
@@ -75,7 +63,7 @@ async def sendrequest(path, **args):
                 timeout=req_timeout,
                 verify=False
             )
-        
+
         else:
             return {
                 'success': False,
@@ -93,7 +81,7 @@ async def sendrequest(path, **args):
                 'raw_response': response.text,
                 'status_code': response.status_code
             }
-        
+
         return {
             'success': True,
             'data': response_data,
@@ -153,7 +141,7 @@ async def get_all_instances(page: int = 1, size: int = 200):
             'error': '返回的数据不是列表',
             'raw_data': api_response
         }
-    
+
     status_mapping = {-1: '忙碌',0: '停止',1: '停止中',2: '启动中',3: '运行中'}
     formatted_instances = []
     for instance in instance_list:
