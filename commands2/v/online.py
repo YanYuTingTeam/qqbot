@@ -1,0 +1,53 @@
+import asyncio
+import aiohttp
+from typing import List, Dict, Any
+from botpy.message import GroupMessage
+import sys
+import requests
+from urllib.parse import quote
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from others.getServers import get_all_instances
+from extension.picMaker import get_current_time
+from app.sendMessage import sendMessage
+from extension.request import get, post
+
+async def handle_command(args: List[str], message: GroupMessage) -> str:
+    import importlib
+    run_path = os.getcwd()
+    sys.path.insert(0, run_path)
+    config_path = f"commands2.v.config"
+    if config_path in sys.modules:
+        del sys.modules[config_path]
+    config = importlib.import_module(config_path)
+    if message.author.member_openid not in config.whitelist:
+        await sendMessage.text("你没有权限使用这个命令!",message)
+        return
+    #all_instances = await get_all_instances()
+    all_instances = await get(f"**HIDDEN BASE**/server/list?ping=true")
+    scount=0
+    pcount=0
+    messaget=f"烟雨庭 | {get_current_time()}"
+    if all_instances['code']==200:
+        for idx, ins in enumerate(all_instances['data']['servers'], 1):
+            #print(ins['status_code'])
+            #print(ins['online'])
+            if (ins['online']!=-1):
+                scount+=1
+                if ins['online'] > 0:
+                    for pidx, pins in enumerate(ins['players'], 1):
+                        pcount+=1
+                        messaget=messaget+"\n"+f"{ins['port']} {ins['name']} | {pins['name']}"
+        messaget=messaget+"\n"+f"{scount} 个服务端上 共有 {pcount} 名玩家在线"
+        await sendMessage.text(f"{messaget}", message)
+        
+
+        # 2. 演示：获取第一个实例的详情（如果有实例）
+        #if all_instances['count'] > 0:
+        #    first_uuid = all_instances['instances'][0]['uuid']
+        #    print(f"\n=== 获取单个实例详情（UUID: {first_uuid}）===")
+        #    single_ins = get_single_instance(first_uuid)
+        #    print(f"请求结果: {'成功' if single_ins['success'] else '失败'}")
+    else:
+        raise Exception(f"获取实例失败: {all_instances['message']}")
+    return ""

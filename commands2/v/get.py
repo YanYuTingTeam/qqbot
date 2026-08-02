@@ -13,7 +13,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     if config_path in sys.modules:
         del sys.modules[config_path]
     config = importlib.import_module(config_path)
-    if message.group_openid!="8E6B4167780F0742FD595F75B568CC4F" and message.author.member_openid not in config.whitelist:
+    if message.group_openid!="8E6B4167780F0742FD595F75B568CC4F" and message.group_openid!="9F2F60F87CCE13D22F445BE1823380AF" and message.author.member_openid not in config.whitelist:
         await sendMessage.text(f"鉴权失败 ({str(message.author.member_openid)[0:4]}{str(message.group_openid)[0:4]}{str(message.author.member_openid)[-1:-5]})",message)
         return
     await sendMessage.text(f"""以下是你的信息\nOI | {message.author.member_openid}\nGI | {message.group_openid}""",message)

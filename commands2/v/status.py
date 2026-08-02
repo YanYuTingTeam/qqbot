@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from others.getServers import get_all_instances
 from extension.picMaker import get_current_time
 from app.sendMessage import sendMessage
+from extension.request import get, post
 
 async def handle_command(args: List[str], message: GroupMessage) -> str:
     import importlib
@@ -22,18 +23,19 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     if message.author.member_openid not in config.whitelist:
         await sendMessage.text("你没有权限使用这个命令!",message)
         return
-    all_instances = await get_all_instances()
+    #all_instances = await get_all_instances()
+    all_instances = await get(f"**HIDDEN BASE**/server/list?ping=true")
     scount=0
     messaget=f"烟雨庭 | {get_current_time()}"
-    if all_instances['success']:
-        for idx, ins in enumerate(all_instances['instances'], 1):
+    if all_instances['code']==200:
+        for idx, ins in enumerate(all_instances['data']['servers'], 1):
             #print(ins['status_code'])
             #print(ins['online'])
-            if (ins['status_code']==3):
+            if (ins['online']!=-1):
                 scount+=1
-                if ins['online'] !=0:
-                    messaget=messaget+"\n"+f"{ins['name']} - {ins['online']}/{ins['max_online']}"
-        messaget=messaget+"\n"+f"正在运行 {scount}/{all_instances['count']} 个服务端"
+                if ins['online'] > 0:
+                    messaget=messaget+"\n"+f"{ins['port']} {ins['name']} - {ins['online']}/{ins['max']}"
+        messaget=messaget+"\n"+f"正在运行 {scount}/{len(all_instances['data']['servers'])} 个服务端"
         await sendMessage.text(f"{messaget}", message)
         
 
@@ -44,5 +46,5 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
         #    single_ins = get_single_instance(first_uuid)
         #    print(f"请求结果: {'成功' if single_ins['success'] else '失败'}")
     else:
-        raise Exception(f"获取实例失败: {all_instances['error']}")
+        raise Exception(f"获取实例失败: {all_instances['message']}")
     return ""
