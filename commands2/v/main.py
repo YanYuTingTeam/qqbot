@@ -23,7 +23,8 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     "/v ban <玩家名> (--r <理由>) (--t <时间，如 7d>) 封禁玩家\n" \
     "/v unban <玩家名> 解封玩家\n" \
     "/v view <举报编号> 查看举报信息\n" \
-    "/v statu 查看子服信息(仅显示有人的子服)\n" \
+    "/v status 查看子服人数情况(仅显示有人的子服)\n" \
+    "/v online 查看在线玩家\n" \
     "/v cmd <port> <command> 使子服批量执行命令\n" \
     "格式 port1~port2: (port1):(port2) 或 all 或 <表达式1>|<表达式2>\n" \
     "    比如 25565|25566|25569:29999\n" \
