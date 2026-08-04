@@ -75,7 +75,7 @@ async def sendrequest(path, **args):
         try:
             response_data = response.json()
         except json.JSONDecodeError as e:
-            raise(Exception(f'JSON解析失败 {str(response.text)}'))
+            raise(Exception(f'JSON解析失败'))
             return {
                 'success': False,
                 'error': f'JSON解析失败 {str(e)}',
@@ -102,7 +102,7 @@ async def sendrequest(path, **args):
             'error': f'连接失败 {base_url}'
         }
     except requests.exceptions.HTTPError as e:
-        raise(Exception(f'HTTP错误 {str(e)}'))
+        raise(Exception(f'500 Error'))
         return {
             'success': False,
             'error': f'HTTP错误 {str(e)}',
@@ -110,7 +110,7 @@ async def sendrequest(path, **args):
             'raw_response': response.text
         }
     except Exception as e:
-        raise(Exception(f'未知错误 {str(e)}'))
+        raise(Exception(f'未知错误'))
         return {
             'success': False,
             'error': f'未知错误 {str(e)}',

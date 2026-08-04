@@ -30,8 +30,8 @@ os.chdir(CURRENT_DIR)
 if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
-LIMIT_CHECK_SECONDS = 1
-LIMIT_MAX_MSG = 1
+LIMIT_CHECK_SECONDS = 2
+LIMIT_MAX_MSG = 3
 LIMIT_BAN_SECONDS = 10
 DB_PATH = os.path.join(CURRENT_DIR, "db.sqlite")
 TABLE_RATE_LIMIT = "cmd_rate_limit"
