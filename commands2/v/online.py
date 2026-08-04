@@ -35,9 +35,10 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
             if (ins['online']!=-1):
                 scount+=1
                 if ins['online'] > 0:
+                    messaget=messaget+"\n"+f"{ins['port']} {ins['name']} | "
                     for pidx, pins in enumerate(ins['players'], 1):
                         pcount+=1
-                        messaget=messaget+"\n"+f"{ins['port']} {ins['name']} | {pins['name']}"
+                        messaget=messaget+f"{pins['name']}{", " if pidx < len(ins['players']) else ""}"
         messaget=messaget+"\n"+f"{scount} 个服务端上 共有 {pcount} 名玩家在线"
         await sendMessage.text(f"{messaget}", message)
         
