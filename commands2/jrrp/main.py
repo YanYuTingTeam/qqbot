@@ -117,7 +117,13 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
         row = cursor.fetchone()
 
         if row is None:
-            luck = random.randint(0, 100)
+            luck1 = random.randint(0,100)
+            if luck1<=50:
+                luck = random.randint(50,79)
+            elif luck1<=80:
+                luck = random.randint(80,100)
+            else:
+                luck = random.randint(0,49)
             desc = pick_desc(luck)
             if has_desc_col:
                 cursor.execute(

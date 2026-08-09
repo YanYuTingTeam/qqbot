@@ -32,7 +32,7 @@ if CURRENT_DIR not in sys.path:
 
 LIMIT_CHECK_SECONDS = 2
 LIMIT_MAX_MSG = 3
-LIMIT_BAN_SECONDS = 10
+LIMIT_BAN_SECONDS = 15
 DB_PATH = os.path.join(CURRENT_DIR, "db.sqlite")
 TABLE_RATE_LIMIT = "cmd_rate_limit"
 
