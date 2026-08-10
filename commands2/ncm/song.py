@@ -37,7 +37,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
         await sendMessage.text("在获取ID时遇到问题, 请联系bot开发者修改源码", message)
         return ""
     
-    api_url = f"https://api.aermini.top/wy/url/?id={id}&q={q}"
+    api_url = f"https://api.aermini.top/wy/url/?id={id}&q={q}&key=**HIDDEN**"
     await sendMessage.text(f'正在生成, 请稍等 ({id})', message, 2)
     
     try:
