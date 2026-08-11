@@ -41,6 +41,38 @@ class sendMessage:
             msg_seq=seq
         )
 
+    async def buttonLink(content: str, url: str, message: GroupMessage, seq: int = 1):
+        await message._api.post_group_message(
+            group_openid=message.group_openid,
+            msg_id=message.id,
+            msg_type=2,
+            markdown={"content": content},
+            keyboard={
+                "content": {
+                    "rows": [
+                        {
+                            "buttons": [
+                                {
+                                    "id": "play_url",
+                                    "render_data": {
+                                        "label": "\u25b6\u70b9\u51fb\u64ad\u653e",
+                                        "visited_label": "\u25b6\u5df2\u6253\u5f00",
+                                        "style": 1
+                                    },
+                                    "action": {
+                                        "type": 2,
+                                        "permission": {"type": 2},
+                                        "data": url
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            msg_seq=seq
+        )
+
     async def image(url, message: GroupMessage, seq: int = 1):
         uploadMedia = await message._api.post_group_base64file(
                 group_openid=message.group_openid, 

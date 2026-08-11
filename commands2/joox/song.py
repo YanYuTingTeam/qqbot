@@ -18,8 +18,6 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     # joox的id含有 + / = 等字符, 需要URI编码
     encoded_id = quote(song_id, safe='')
     
-    await sendMessage.text(f'正在生成, 请稍等 ({song_id})', message, 2)
-    
     try:
         async with aiohttp.ClientSession() as session:
             # 1. 获取歌曲详情, 拿到songmid
@@ -29,6 +27,11 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
                     await sendMessage.text(f"请求详情失败 -> code{response.status}", message)
                     return ""
                 detail_data = await response.json()
+            
+            song_name = detail_data.get("name", "")
+            artist_list = detail_data.get("artist_list", [])
+            artists = "、".join([a.get("name", "") for a in artist_list]) if artist_list else "未知"
+            await sendMessage.text(f'正在生成{song_name}-{artists}({song_id}), 请稍后', message, 2)
             
             songmid = detail_data.get("songmid", "")
             if not songmid:
