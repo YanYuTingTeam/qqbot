@@ -87,7 +87,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
             artist_list = detail_data.get("artist_list", [])
             artists = "、".join([a.get("name", "") for a in artist_list]) if artist_list else "未知"
             await sendMessage.text(
-                f'正在生成{song_name}-{artists}({song_id}), 请稍后',
+                f'正在生成{song_name} - {artists}({song_id}), 请稍后',
                 message,
                 2
             )
