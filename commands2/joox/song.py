@@ -21,7 +21,6 @@ async def is_audio_url(session: aiohttp.ClientSession, url: str) -> bool:
             if resp.status != 200:
                 return False
 
-            # 读取前 128 字节，音频文件一般是二进制，而 XML 错误页是文本
             chunk = await resp.content.read(128)
             stripped = chunk.lstrip()
 
