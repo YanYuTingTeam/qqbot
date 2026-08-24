@@ -50,7 +50,8 @@ async def ncmSearchResult(result: object, page: int = 1, songNum: int = 0):
     heavyfont = r"C:\Users\Administrator\Desktop\qqbot\font\MISANS-HEAVY.TTF"
     lenth = result["result"]["songCount"]
     maxStrLenth = 600
-    ioffset = (page-1)*8
+    #ioffset = (page-1)*8
+    ioffset = 0
 
     songs = result.get("result", {}).get("songs", [])
     song_list_str=""

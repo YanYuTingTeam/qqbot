@@ -69,7 +69,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
             #         data["result"]["songs"][song_idx]["ar"][artist_idx]["img"] = avatar
             
             img_path = await ncmSearchResult(data, page, t)
-            qt = data["result"]["songs"][t]["id"] if t>0 else ""
+            #qt = data["result"]["songs"][t]["id"] if t>0 else ""
             await sendMessage.image(img_path, message)
             if os.path.exists(img_path):
                 os.remove(img_path)

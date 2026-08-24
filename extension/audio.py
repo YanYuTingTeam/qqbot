@@ -62,7 +62,7 @@ def audio_to_silk(path):
     pcm_file = os.path.join(temp_dir, f"temp_{hash(original_path)}.pcm")
     ffmpeg_cmd = [
         "ffmpeg", "-y", "-i", original_path,
-        "-ar", "24000", "-ac", "1", "-f", "s16le", "-acodec", "pcm_s16le",
+        "-ar", "48000", "-ac", "1", "-f", "s16le", "-acodec", "pcm_s16le",
         pcm_file
     ]
     try:
@@ -75,8 +75,8 @@ def audio_to_silk(path):
     silk_cmd = [
         silk_encoder_exe,
         pcm_file, slk_file,
-        "-Fs_API", "24000",
-        "-rate", "25000",
+        "-Fs_API", "48000",
+        "-rate", "32000",
         "-tencent"
     ]
     try:
