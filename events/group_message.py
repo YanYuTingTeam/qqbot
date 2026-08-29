@@ -1,4 +1,5 @@
 from botpy.connection import ConnectionState
+from botpy.message import GroupMessage
 
 _raw_payloads = {}
 def get_raw_payload(msg_id: str) -> dict:
