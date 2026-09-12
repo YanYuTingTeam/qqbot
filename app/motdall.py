@@ -36,21 +36,17 @@ async def motdall(json_list):
 
     xyall = [
         [1640, 397, 72], # yyt
-        [1640, 1319, 72], # lht 1
-        [1640, 1529, 72], # lht 2
+        [1640, 1319, 72], # huh pc
+        [1640, 1529, 72], # huh pe
         [3400, 503, 72], # nmc
-        [3400, 1390, 72], # huh 1
-        #[3400, 1585, 72], # huh 2
-        [3400, 2496, 72], # hzw 1
-        [3400, 2698, 72], # hzw 2
+        [3400, 1397, 72], # hyg
     ]
 
     group = [
         {'x':440,'y':764,'ar':[1]}, # yyt
-        {'x':440,'y':1910,'ar':[2,3]}, # lht
+        {'x':440,'y':1900,'ar':[2,3]}, # huh
         {'x':2184,'y':872,'ar':[4]}, # nmc
-        {'x':2184,'y':1950,'ar':[5]}, # huh
-        {'x':2184,'y':3068,'ar':[6,7]} # hzw
+        {'x':2184,'y':1900,'ar':[5]}, # hyg
     ]
 
     for i, server_data in enumerate(json_list):
@@ -176,14 +172,24 @@ async def motdall(json_list):
         except: pass
 
     maker.text(
-        x=f"110px",
-        y=f"3330px",
-        size="60px",
+        x=f"640px",
+        y=f"2428px",
+        size="66px",
         font_path=str(font_path),
         color="#ffffff",
         opacity=1.0,
-        align="left",
-        content="查询时间: "+get_current_time()
+        align="center",
+        content=get_current_time("%Y / %m / %d")
+    )
+    maker.text(
+        x=f"640px",
+        y=f"2520px",
+        size="76px",
+        font_path=str(font_path),
+        color="#ffffff",
+        opacity=1.0,
+        align="center",
+        content=get_current_time("%H:%M:%S")
     )
 
     return maker.save(f"motd_all_{int(time.time()*1000)}.png")
@@ -191,19 +197,17 @@ async def motdall(json_list):
 async def todo(way: int = 1):
     servers = [
         ('mcyyt.cn', 25565),
-        ('hyt.nccc.top', 25565),
-        ('hyt.galastar.icu', 25565),
+        ('pc.mchyt.net', 25565),
+        ('pe.mchyt.net', 19132, 1),
         ('frp-ski.com', 44899),
-        ('km.pc.mchyt.net', 25565),
-        ('mc.huazhiwu.club', 25565),
-        ('mc.huazhiwu.top', 25565)
+        ('mc.huayuge.9666.fun', 39034),
     ]
     
     try:
         tasks = []
-        for server, port in servers:
+        for server, port, *platform in servers:
             if port:
-                task = asyncio.create_task(motd4.motd(server, port))
+                task = asyncio.create_task(motd4.motd(server, port, platform=int(platform[0]) if platform else 0))
             else:
                 task = asyncio.create_task(motd4.motd(server))
             tasks.append(task)
