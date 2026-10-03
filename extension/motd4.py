@@ -79,7 +79,8 @@ async def getsrv(host, record="_minecraft._tcp"):
     query = "%s.%s" % (record, domain)
 
     try:
-        resolver = dns.asyncresolver.Resolver()
+        resolver = dns.asyncresolver.Resolver(configure=False)
+        resolver.nameservers = ["223.5.5.5"]
         resolver.timeout = 1.5
         resolver.lifetime = 1.5
         answers = await resolver.resolve(query, "SRV")

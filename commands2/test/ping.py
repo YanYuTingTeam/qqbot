@@ -8,5 +8,5 @@ from extension.motd4 import motd
 
 async def handle_command(args: List[str], message: GroupMessage) -> str:
     platform = 0 if int(args[0]) == 0 else 1
-    re = await motd(host=args[1], port=19132, platform=platform)
+    re = await motd(host=args[1], platform=platform)
     await sendMessage.text(str(re), message)
