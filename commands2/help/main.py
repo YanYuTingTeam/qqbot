@@ -15,4 +15,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
     "/sd SweetDream相关总命令\n" \
     "/ncm 网易云相关总命令\n" \
     "/joox JOOX相关总命令\n" \
-    "上述命令可以直接请求，也可以 /.. help",message)
+    "上述命令可以直接请求，也可以 /.. help\n" \
+    " \n" \
+    "本bot已在Github开源\n" \
+    "https://github.com/YanYuTingTeam/qqbot" ,message)

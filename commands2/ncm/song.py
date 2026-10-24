@@ -47,7 +47,7 @@ async def handle_command(args: List[str], message: GroupMessage) -> str:
                 #    await sendMessage.text(f"请求失败 -> code{response.status}", message)
                 #    return ""
                 data = await response.json()
-                slk = await getSlk(session, id)
+                #slk = await getSlk(session, id)
 
             if data.get("code",-1) == -1:
                 await sendMessage.text(f"请求失败, 请检查api是否出现问题", message)
